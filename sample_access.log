@@ -1,0 +1,62 @@
+# --- Normal traffic ---
+192.168.1.5 - - [12/Feb/2026:14:30:01] "GET / HTTP/1.1" 200
+192.168.1.5 - - [12/Feb/2026:14:30:02] "GET /about HTTP/1.1" 200
+192.168.1.6 - - [12/Feb/2026:14:30:05] "GET /products HTTP/1.1" 200
+
+# --- Brute force login attack (should trigger rule 1) ---
+192.168.1.10 - - [12/Feb/2026:14:32:21] "POST /login HTTP/1.1" 401
+192.168.1.10 - - [12/Feb/2026:14:32:23] "POST /login HTTP/1.1" 401
+192.168.1.10 - - [12/Feb/2026:14:32:25] "POST /login HTTP/1.1" 403
+192.168.1.10 - - [12/Feb/2026:14:32:30] "POST /login HTTP/1.1" 401
+192.168.1.10 - - [12/Feb/2026:14:32:35] "POST /login HTTP/1.1" 401
+192.168.1.10 - - [12/Feb/2026:14:32:40] "POST /login HTTP/1.1" 401
+192.168.1.10 - - [12/Feb/2026:14:32:45] "POST /login HTTP/1.1" 401
+
+# --- Rate limit attack (should trigger rule 2) ---
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:01] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:02] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:02] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:02] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:03] "GET /api/data HTTP/1.1" 200
+10.0.0.25 - - [12/Feb/2026:14:35:03] "GET /api/data HTTP/1.1" 200
+
+# --- Excessive 404 scan (should trigger rule 3) ---
+172.16.0.8 - - [12/Feb/2026:14:40:00] "GET /unknown1 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:40:10] "GET /unknown2 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:40:20] "GET /unknown3 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:40:30] "GET /unknown4 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:40:40] "GET /unknown5 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:40:50] "GET /unknown6 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:41:00] "GET /unknown7 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:41:10] "GET /unknown8 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:41:20] "GET /unknown9 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:41:30] "GET /unknown10 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:41:40] "GET /unknown11 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:41:50] "GET /unknown12 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:42:00] "GET /unknown13 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:42:10] "GET /unknown14 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:42:20] "GET /unknown15 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:42:30] "GET /unknown16 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:42:40] "GET /unknown17 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:42:50] "GET /unknown18 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:43:00] "GET /unknown19 HTTP/1.1" 404
+172.16.0.8 - - [12/Feb/2026:14:43:10] "GET /unknown20 HTTP/1.1" 404
+
+# --- Admin probing (should trigger rule 4) ---
+203.0.113.50 - - [12/Feb/2026:14:50:01] "GET /admin HTTP/1.1" 200
+203.0.113.50 - - [12/Feb/2026:14:50:02] "GET /wp-admin HTTP/1.1" 403
+203.0.113.50 - - [12/Feb/2026:14:50:03] "GET /.env HTTP/1.1" 404
+203.0.113.50 - - [12/Feb/2026:14:50:04] "GET /phpmyadmin HTTP/1.1" 404
+
+# --- Some malformed lines (should be skipped) ---
+INVALID LOG LINE HERE
+123 - missing parts

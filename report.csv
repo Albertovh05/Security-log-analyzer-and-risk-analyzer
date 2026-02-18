@@ -1,0 +1,7 @@
+incident_id,ip,rule,first_seen,last_seen,count,sample_endpoints,sample_status_codes
+1,192.168.1.10,brute_force,2026-02-12T14:32:12,2026-02-12T14:32:30,5,/login,401; 403
+2,10.0.0.3,sensitive_path,2026-02-12T14:33:00,2026-02-12T14:33:01,2,/wp-admin; /wp-admin/setup-config.php,403
+3,10.0.0.4,sensitive_path,2026-02-12T14:33:10,2026-02-12T14:33:13,4,/.env; /phpmyadmin; /admin; /admin/config,403; 404
+4,172.16.0.50,excessive_404,2026-02-12T14:34:19,2026-02-12T14:34:20,2,/missing11; /missing12,404
+5,10.0.0.5,rate_limit,2026-02-12T14:35:02,2026-02-12T14:35:02,1,/page33,200
+6,10.0.0.6,sensitive_path,2026-02-12T14:38:00,2026-02-12T14:38:00,1,/admin/users,403
